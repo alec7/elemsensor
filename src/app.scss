@@ -1,0 +1,41 @@
+body {
+  font: menu;
+}
+
+.dashboard {
+  & > ul {
+    list-style-type : none;
+    margin : 0;
+    padding : 0;
+
+    & > li {
+      margin : 0;
+      padding : 1em;
+      min-height : 5em;
+
+      &.has-sensors {
+        & > div > div {
+        }
+      }
+
+      & > div {
+        & > div.noData {
+          &:after {
+            display : block;
+            content : '...';
+            text-align : center;
+            opacity : .5;
+          }
+        }
+
+        & > header {
+          margin-bottom : 1em;
+
+          & > span.value {
+            float : right;
+          }
+        }
+      }
+    }
+  }
+}
