@@ -45,7 +45,19 @@ function getDefaultSensorCollection(sensors) {
   };
 
   const isValid = (s) => {
-    return allSensors[s].input !== 0;
+    const sensor = allSensors[s];
+
+    // We don't need these as they are on/off only
+    if ( ['beep', 'intrusion'].indexOf(sensor.sensor) !== -1 ) {
+      return false;
+    }
+
+    // For some reason some of my temps are at minimum
+    if ( sensor.sensor === 'temp' && sensor.input < -120 ) {
+      return false;
+    }
+
+    return sensor.input !== 0;
   };
 
   adapters.forEach((a) => {
@@ -63,7 +75,7 @@ function getDefaultSensorCollection(sensors) {
         .filter((s) => allSensors[s].sensor === t)
         .filter(isValid)
     };
-  });
+  }).filter((c) => c.sensors.length > 0);
 
   const individuals = Object.keys(allSensors)
     .filter(isValid)
@@ -72,7 +84,8 @@ function getDefaultSensorCollection(sensors) {
         label: s,
         sensors: [s]
       };
-    });
+    })
+    .filter((c) => c.sensors.length > 0);
 
   return collections.concat(individuals);
 }
