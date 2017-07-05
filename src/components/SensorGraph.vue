@@ -3,15 +3,34 @@
     <header>
       <div class="left">
         <span class="label">{{ collection.label }}</span>
-        <span class="name">({{ collection.name }})</span>
       </div>
       <div class="right">
-        <span class="value">{{ collection.data.values.join(' / ') }}</span>
-        <span class="minmax">min : {{ collection.data.min.join(' / ') }}</span>
-        <span class="minmax">max : {{ collection.data.max.join(' / ') }}</span>
+        <table v-if="collection.data.count > 0">
+          <thead>
+            <tr>
+              <th>&nbsp;</th>
+              <th v-for="name in collection.data.names">{{ name }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>cur</td>
+              <td v-for="value in collection.data.values">{{ value }}</td>
+            </tr>
+            <tr>
+              <td>min</td>
+              <td v-for="value in collection.data.min">{{ value }}</td>
+            </tr>
+            <tr>
+              <td>max</td>
+              <td v-for="value in collection.data.max">{{ value }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </header>
     <chartist
+      v-if="collection.data.count > 0"
       :type="collection.chart.type"
       :data="collection.chart.data"
       :options="collection.chart.options">

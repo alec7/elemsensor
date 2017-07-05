@@ -1,8 +1,12 @@
 body {
   font: menu;
+  margin : 0;
+  padding : 0;
 }
 
 .dashboard {
+  background-color : #fff;
+
   & > ul {
     list-style-type : none;
     margin : 0;
@@ -12,6 +16,10 @@ body {
       margin : 0;
       padding : 1em;
       min-height : 5em;
+
+      &:nth-child(2n+1) {
+        background-color : #f7f7f7;
+      }
 
       & > div {
         & > div.noData {
@@ -45,23 +53,16 @@ body {
               text-align : right;
             }
 
-            & > span {
-              display : inline-block;
-              overflow : hidden;
-              text-overflow: ellipsis;
-              line-height : 2;
+            span.label {
+              font-weight : bold;
+            }
 
-              &.label {
-                font-weight : bold;
-              }
-              &.name {
+            table {
+              float : right;
+              font-size : inherit;
 
-              }
-              &.value {
-                display : block;
-              }
-              &.minmax {
-                display : block;
+              td {
+                padding : .2em;
               }
             }
           }

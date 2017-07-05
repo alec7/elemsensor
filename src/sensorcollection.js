@@ -151,11 +151,10 @@ export default class SensorCollection {
       });
     };
 
-    const name = this.collection.map((r) => r.name).join(', ');
+    const names = this.collection.map((r) => r.name);
 
     return {
-      name: name,
-      label: this.label || name,
+      label: this.label || names.join(', '),
       sensors: this.collection.map((r) => r.name),
 
       options: {
@@ -163,6 +162,7 @@ export default class SensorCollection {
       },
 
       data: {
+        names: names,
         values: unitized('value'),
         count: this.count(),
         min: unitized('min'),
