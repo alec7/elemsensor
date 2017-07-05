@@ -7,7 +7,7 @@
 <script>
 
 import SensorGraph from './SensorGraph.vue';
-import Sensor from '../sensor.js';
+import SensorCollection from '../sensorcollection.js';
 
 export default {
   props: ['collection', 'index'],
@@ -18,7 +18,7 @@ export default {
 
   methods: {
     contextmenu: function() {
-      return Sensor.createContextMenu(this.index, this.collection);
+      return SensorCollection.createContextMenu(this.index, this.collection);
     }
   }
 }

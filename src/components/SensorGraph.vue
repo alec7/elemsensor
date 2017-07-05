@@ -1,6 +1,11 @@
 <template>
   <div class="sensor-graph">
-    <header><strong>{{ collection.label }}</strong> <span class="name">({{ collection.name }})</span> <span class="value">{{ collection.value }}</span></header>
+    <header>
+      <strong>{{ collection.label }}</strong>
+      <span class="name">({{ collection.name }})</span>
+      <span class="value" v-if="collection.count > 1">{{ collection.values.join(' / ') }}</span>
+      <span class="value" v-if="collection.count === 1">{{ collection.values.join('') }} min:{{ collection.min.join('') }} max:{{ collection.max.join('') }}</span>
+    </header>
     <chartist
       :type="collection.chart.type"
       :data="collection.chart.data"

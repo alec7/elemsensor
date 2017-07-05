@@ -25,7 +25,6 @@
 import LM from 'lm_sensors.js';
 import Preferences from './preferences.js';
 import Localization from './localization.js';
-import {remote} from 'electron';
 
 /**
  * Unit types
@@ -56,21 +55,37 @@ function getValueFromMap(bound, map, sensor) {
 
 /**
  * Gets the sensor data
- * @return {Number[]}
+ * @return {Object}
  */
 const getSensorBuffer = (function() {
-  let sensorBuffer = {};
+  const sensorBuffer = {};
+  const sensorMin = {};
+  const sensorMax = {};
 
   return function(iter, sensor) {
+    const value = sensor.input;
     const sensorBufferLength = Preferences.get('buffer');
 
     if ( typeof sensorBuffer[iter] === 'undefined' ) {
       sensorBuffer[iter] = Array.from(Array(sensorBufferLength), () => 0);
     }
 
-    sensorBuffer[iter].push(sensor.input);
+    if ( typeof sensorMin[iter] === 'undefined' || value < sensorMin[iter] ) {
+      sensorMin[iter] = value;
+    }
+
+    if ( typeof sensorMax[iter] === 'undefined' || value > sensorMax[iter] ) {
+      sensorMax[iter] = value;
+    }
+
+    sensorBuffer[iter].push(value);
     sensorBuffer[iter].splice(0, sensorBuffer[iter].length - sensorBufferLength);
-    return sensorBuffer[iter];
+
+    return {
+      values: sensorBuffer[iter],
+      min: sensorMin[iter],
+      max: sensorMax[iter]
+    };
   };
 })();
 
@@ -85,12 +100,17 @@ export default class Sensor {
    * @param {Object} sensor The sensor data from lm_sensors
    */
   constructor(adapter, name, sensor) {
-    this.id = [adapter, name].join(':');
+    const id = [adapter, name].join(':');
+    const {values, min, max} = getSensorBuffer(id, sensor);
+
+    this.id = id;
     this.adapter = adapter;
     this.name = name;
     this.sensor = sensor;
     this.type = this.sensor.sensor;
-    this.values = getSensorBuffer(this.id, sensor);
+    this.values = values;
+    this.min = min;
+    this.max = max;
     this.value = sensor.input;
   }
 
@@ -116,23 +136,18 @@ export default class Sensor {
   }
 
   /**
-   * Gets minimum value of sensor
-   * @return {Number}
+   * Gets min/max bounds
+   * @return {Object}
    */
-  min() {
-    return getValueFromMap('min', Preferences.get('min'), this.sensor);
-  }
+  bounds() {
+    const min = getValueFromMap('min', Preferences.get('min'), this.sensor);
 
-  /**
-   * Gets maximum value of sensor
-   * @return {Number}
-   */
-  max() {
-    if ( typeof this.sensor.max === 'undefined' || !this.sensor.max ) {
-      return getValueFromMap('max', Preferences.get('max'), this.sensor);
+    let max = this.sensor.max;
+    if ( typeof max === 'undefined' || !max ) {
+      max = getValueFromMap('max', Preferences.get('max'), this.sensor);
     }
 
-    return this.sensor.max;
+    return {min, max};
   }
 
   /**
@@ -145,80 +160,6 @@ export default class Sensor {
     };
 
     return LM.sensors(opts);
-  }
-
-  /**
-   * Creates the context menu
-   * @param {Number} index The collection index
-   * @param {Object} collection The collection object
-   * @return {void}
-   */
-  static createContextMenu(index, collection) {
-    const optionsTemplate = [
-      {label: Localization._('SHOW_GRID'), key: 'axisX.showGrid'},
-      {label: Localization._('SHOW_LABEL'), key: 'axisX.showLabel'},
-      {label: Localization._('SHOW_AREA'), key: 'showArea'},
-      {label: Localization._('SHOW_POINT'), key: 'showPoint'}
-    ];
-
-    const win = remote.getCurrentWindow();
-
-    const createMenu = (sensors) => {
-      const menu = remote.Menu.buildFromTemplate([
-        {
-          label: Localization._('RENAME'),
-          click: () => Preferences.collection.rename(index)
-        },
-        {
-          label: Localization._('REMOVE'),
-          click: () => Preferences.collection.remove(index)
-        },
-        {
-          label: Localization._('TYPE'),
-          submenu: Preferences.get('types').map((t) => {
-            return {
-              label: t,
-              click: () => Preferences.collection.setType(index, t)
-            };
-          })
-        },
-        {
-          label: Localization._('SENSORS'),
-          submenu: Object.keys(sensors).map((adapter) => {
-            return {
-              label: adapter,
-              submenu: Object.keys(sensors[adapter].sensors).map((n) => {
-                const exists = collection.sensors.indexOf(n) !== -1;
-
-                return {
-                  label: n,
-                  type: 'checkbox',
-                  checked: exists,
-                  click: () => Preferences.collection[exists ? 'removeSensor' : 'addSensor'](index, adapter, n)
-                };
-              })
-            };
-          })
-        },
-        {
-          label: Localization._('OPTIONS'),
-          submenu: optionsTemplate.map((t) => {
-            const current = Preferences.collection.getOption(index, t.key, collection.chart.options);
-
-            return {
-              label: t.label,
-              type: 'checkbox',
-              checked: current,
-              click: () => Preferences.collection.setOption(index, t.key, !current)
-            };
-          })
-        }
-      ]);
-
-      menu.popup(win);
-    };
-
-    this.getSensors().then(createMenu).catch(() => createMenu([]));
   }
 
 }

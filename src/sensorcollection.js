@@ -23,8 +23,10 @@
  */
 import Sensor from './sensor.js';
 import Preferences from './preferences.js';
+import Localization from './localization.js';
 
 import moment from 'moment';
+import {remote} from 'electron';
 
 /**
  * The sensor collection class
@@ -51,11 +53,23 @@ export default class SensorCollection {
   }
 
   /**
+   * Gets the min/max bounds used for graph
+   * @return {Object}
+   */
+  bounds() {
+    const bounds = this.collection.map((r) => r.bounds());
+    const min = Math.min(...bounds.map((r) => r.min));
+    const max = Math.max(...bounds.map((r) => r.max));
+
+    return {min, max};
+  }
+
+  /**
    * Gets maximum value of all sensors in collection
    * @return {Number}
    */
   min() {
-    return Math.min(...this.collection.map((r) => r.min()));
+    return Math.min(...this.collection.map((r) => r.min));
   }
 
   /**
@@ -63,7 +77,7 @@ export default class SensorCollection {
    * @return {Number}
    */
   max() {
-    return Math.max(...this.collection.map((r) => r.max()));
+    return Math.max(...this.collection.map((r) => r.max));
   }
 
   /**
@@ -97,16 +111,6 @@ export default class SensorCollection {
   }
 
   /**
-   * Gets a textual representation of the value of collection
-   * @return {String}
-   */
-  value() {
-    return this.collection.map((c) => {
-      return [c.value, c.unit()].join(' ');
-    }).join(', ');
-  }
-
-  /**
    * Gets number of sensors
    * @return {Number}
    */
@@ -119,10 +123,11 @@ export default class SensorCollection {
    * @return {Object}
    */
   createOptions() {
+    const {min, max} = this.bounds();
     return Object.assign({
       distributeSeries: this.type !== 'Line',
-      low: this.min(),
-      high: this.max(),
+      low: min,
+      high: max,
       chartPadding: 0,
       showPoint: this.count() > 1,
       showArea: this.count() < 2,
@@ -139,13 +144,22 @@ export default class SensorCollection {
    * @return {Object}
    */
   toJson() {
+    const unitized = (k) => {
+      return this.collection.map((c) => {
+        return [c[k], c.unit()].join(' ');
+      });
+    };
+
     const name = this.collection.map((r) => r.name).join(', ');
 
     return {
       className: this.count() ? 'has-sensors' : '',
       name: name,
       label: this.label || name,
-      value: this.value(),
+      values: unitized('value'),
+      count: this.count(),
+      min: unitized('min'),
+      max: unitized('max'),
       sensors: this.collection.map((r) => r.name),
       chart: {
         type: this.type,
@@ -156,6 +170,80 @@ export default class SensorCollection {
         }
       }
     };
+  }
+
+  /**
+   * Creates the context menu
+   * @param {Number} index The collection index
+   * @param {Object} collection The collection object
+   * @return {void}
+   */
+  static createContextMenu(index, collection) {
+    const optionsTemplate = [
+      {label: Localization._('SHOW_GRID'), key: 'axisX.showGrid'},
+      {label: Localization._('SHOW_LABEL'), key: 'axisX.showLabel'},
+      {label: Localization._('SHOW_AREA'), key: 'showArea'},
+      {label: Localization._('SHOW_POINT'), key: 'showPoint'}
+    ];
+
+    const win = remote.getCurrentWindow();
+
+    const createMenu = (sensors) => {
+      const menu = remote.Menu.buildFromTemplate([
+        {
+          label: Localization._('RENAME'),
+          click: () => Preferences.collection.rename(index)
+        },
+        {
+          label: Localization._('REMOVE'),
+          click: () => Preferences.collection.remove(index)
+        },
+        {
+          label: Localization._('TYPE'),
+          submenu: Preferences.get('types').map((t) => {
+            return {
+              label: t,
+              click: () => Preferences.collection.setType(index, t)
+            };
+          })
+        },
+        {
+          label: Localization._('SENSORS'),
+          submenu: Object.keys(sensors).map((adapter) => {
+            return {
+              label: adapter,
+              submenu: Object.keys(sensors[adapter].sensors).map((n) => {
+                const exists = collection.sensors.indexOf(n) !== -1;
+
+                return {
+                  label: n,
+                  type: 'checkbox',
+                  checked: exists,
+                  click: () => Preferences.collection[exists ? 'removeSensor' : 'addSensor'](index, adapter, n)
+                };
+              })
+            };
+          })
+        },
+        {
+          label: Localization._('OPTIONS'),
+          submenu: optionsTemplate.map((t) => {
+            const current = Preferences.collection.getOption(index, t.key, collection.chart.options);
+
+            return {
+              label: t.label,
+              type: 'checkbox',
+              checked: current,
+              click: () => Preferences.collection.setOption(index, t.key, !current)
+            };
+          })
+        }
+      ]);
+
+      menu.popup(win);
+    };
+
+    Sensor.getSensors().then(createMenu).catch(() => createMenu([]));
   }
 
 }
