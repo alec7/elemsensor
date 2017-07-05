@@ -31,7 +31,7 @@ import Router from './router.js';
 import Localization from './localization.js';
 import Preferences from './preferences.js';
 import Monitor from './monitor.js';
-import Sensor from './sensor.js';
+import Adapters from './adapters.js';
 
 // Vex dialogs
 Vex.defaultOptions.className = 'vex-theme-os';
@@ -50,11 +50,11 @@ ipcRenderer.on('route', (ev, msg) => {
 
 /**
  * Initializes the application
- * @param {Object} sensors Sensors from lm
+ * @param {Object} adapters Adapters
  * @return {void}
  */
-const init = (sensors) => {
-  Preferences.init(sensors).then(() => {
+const init = (adapters) => {
+  Preferences.init(adapters).then(() => {
     //const mainWindow = remote.getCurrentWindow();
     const menu = remote.Menu.buildFromTemplate([
       {
@@ -122,6 +122,6 @@ const init = (sensors) => {
   });
 };
 
-Sensor.getSensors()
+Adapters.getAdapters()
   .then(init)
   .catch(() => init({}));

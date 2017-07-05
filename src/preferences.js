@@ -27,17 +27,19 @@ import Localization from './localization.js';
 import Vex from 'vex-js';
 
 let currentCollection;
-let currentSensorList;
+let currentAdapters;
 
 /**
  * Gets the default list of sensor collections to add
- * @param {Object} sensors Sensors from lm
+ * @param {Object} adapters Adapters
  * @return {Array}
  */
-function getDefaultSensorCollection(sensors) {
-  const adapters = Object.keys(sensors);
+function getDefaultSensorCollection(adapters) {
+  const adapterNames = Object.keys(adapters);
   const allSensors = {};
   const types = {
+    'memory': Localization._('LABEL_MEMORY'),
+    'clock': Localization._('LABEL_CLOCK'),
     'fan': Localization._('LABEL_FAN'),
     'temp': Localization._('LABEL_TEMP'),
     'in': Localization._('LABEL_IN'),
@@ -58,11 +60,15 @@ function getDefaultSensorCollection(sensors) {
       return false;
     }
 
+    if ( sensor.sensor === 'usage' || sensor.sensor === 'clock' ) {
+      return true;
+    }
+
     return sensor.input !== 0;
   };
 
-  adapters.forEach((a) => {
-    const adapter = sensors[a];
+  adapterNames.forEach((a) => {
+    const adapter = adapters[a];
     Object.keys(adapter.sensors).forEach((n) => {
       const id = [a, n].join(':');
       allSensors[id] = adapter.sensors[n];
@@ -106,6 +112,8 @@ const DEFAULT_PREFERENCES = {
   collection: [],
   temperature: 'celcius',
   min: {
+    usage: 0,
+    clock: 100,
     temp: 0.0,
     fan: 0,
     in: 0.0,
@@ -113,6 +121,8 @@ const DEFAULT_PREFERENCES = {
     beep: 0
   },
   max: {
+    usage: 100,
+    clock: 5000,
     temp: 120.0,
     fan: 2500,
     in: 13.0,
@@ -135,7 +145,7 @@ function initSettings() {
 
   const tst = ElectronSettings.get('collection');
   if ( !(tst instanceof Array) || !tst.length ) {
-    ElectronSettings.set('collection', getDefaultSensorCollection(currentSensorList));
+    ElectronSettings.set('collection', getDefaultSensorCollection(currentAdapters));
   }
 
   currentCollection = ElectronSettings.get('collection');
@@ -297,11 +307,11 @@ export default {
 
   /**
    * Initializes preferences
-   * @param {Object} sensors Sensors from lm
+   * @param {Object} adapters Adapters
    * @return {Promise}
    */
-  init(sensors) {
-    currentSensorList = sensors;
+  init(adapters) {
+    currentAdapters = adapters;
 
     initSettings();
 

@@ -1,6 +1,6 @@
 # elemsensor
 
-A **Vue** + **Electron** app for showing **lm_sensors** data with pretty graphs.
+A **Vue** + **Electron** app for showing **lm_sensors** (and other) stats with pretty graphs.
 
 ![ScreenShot](https://raw.githubusercontent.com/andersevenrud/elemsensor/master/screenshot.png)
 
@@ -20,6 +20,13 @@ $ npm run build
 
 $ npm run start
 ```
+
+## Features
+
+- Easy to use and configure
+- Pretty graphs
+- Supports `lm_sensors` statistics
+- Also supports `cpu` and `memory` statistics
 
 ## TODO
 

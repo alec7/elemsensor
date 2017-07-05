@@ -1,7 +1,7 @@
 {
   "name": "elemsensor",
   "version": "0.0.1",
-  "description": "A Vue+Electron app for showing lm_sensors data with pretty graphs",
+  "description": "A Vue+Electron app for showing lm_sensors (and other) stats with pretty graphs",
   "scripts": {
     "start": "electron build",
     "build": "webpack",
@@ -10,6 +10,7 @@
   "author": "Anders Evenrud <andersevenrud@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "electron-settings": "^3.1.1",
     "lm_sensors.js": "^0.5.1",
     "moment": "^2.18.1",

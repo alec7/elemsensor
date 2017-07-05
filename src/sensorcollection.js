@@ -22,6 +22,7 @@
  * Anders Evenrud <andersevenrud@gmail.com>
  */
 import Sensor from './sensor.js';
+import Adapters from './adapters.js';
 import Preferences from './preferences.js';
 import Localization from './localization.js';
 
@@ -251,7 +252,7 @@ export default class SensorCollection {
       menu.popup(win);
     };
 
-    Sensor.getSensors().then(createMenu).catch(() => createMenu([]));
+    Adapters.getAdapters().then(createMenu).catch(() => createMenu([]));
   }
 
 }

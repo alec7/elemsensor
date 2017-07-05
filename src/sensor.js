@@ -22,7 +22,6 @@
  * Anders Evenrud <andersevenrud@gmail.com>
  */
 
-import LM from 'lm_sensors.js';
 import Preferences from './preferences.js';
 import Localization from './localization.js';
 
@@ -30,6 +29,8 @@ import Localization from './localization.js';
  * Unit types
  */
 const UNITS = {
+  usage: '%',
+  clock: 'MHz',
   temp: {
     celcius: '°C',
     fahrenheit: '°F'
@@ -49,6 +50,8 @@ function getValue(type, value) {
     return value.toFixed(3);
   } else if ( type === 'temp' ) {
     return value.toFixed(1);
+  } else if ( ['clock', 'usage', 'number'].indexOf(type) !== -1 ) {
+    return parseInt(value, 10);
   }
 
   return value;
@@ -164,18 +167,6 @@ export default class Sensor {
     }
 
     return {min, max};
-  }
-
-  /**
-   * Gets all sensors
-   * @return {Array}
-   */
-  static getSensors() {
-    const opts = {
-      fahrenheit: Preferences.get('temperature') === 'fahrenheit'
-    };
-
-    return LM.sensors(opts);
   }
 
 }

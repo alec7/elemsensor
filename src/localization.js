@@ -50,7 +50,9 @@ const locales = {
     'LABEL_IN': 'Voltages',
     'LABEL_TEMP': 'Temperatures',
     'LABEL_INTRUSION': 'Intrusion',
-    'LABEL_BEEP': 'Beep'
+    'LABEL_BEEP': 'Beep',
+    'LABEL_CLOCK': 'Clock Speeds',
+    'LABEL_MEMORY': 'Memory Usage'
   },
   no: {
     'RPM': 'RPM',
@@ -77,7 +79,9 @@ const locales = {
     'LABEL_IN': 'Strøm',
     'LABEL_TEMP': 'Temperaturer',
     'LABEL_INTRUSION': 'Innbrudd',
-    'LABEL_BEEP': 'Pip'
+    'LABEL_BEEP': 'Pip',
+    'LABEL_CLOCK': 'Klokkehastighet',
+    'LABEL_MEMORY': 'Minnebruk'
   }
 };
 

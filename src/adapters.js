@@ -21,60 +21,35 @@
  *
  * Anders Evenrud <andersevenrud@gmail.com>
  */
+import promise from 'bluebird';
 
-import Adapters from './adapters.js';
-import Preferences from './preferences.js';
-import SensorCollection from './sensorcollection.js';
-
-let paused = false; // If paused or not
-let interval; // Our tick
+const modules = {
+  'hardware': require('./modules/hardware.js'),
+  'lm_sensors': require('./modules/lm_sensors.js')
+};
 
 export default {
+  getAdapters() {
+    return new Promise((resolve, reject) => {
+      const adapterList = {};
 
-  /**
-   * Gets pause state
-   * @return {Boolean}
-   */
-  state() {
-    return paused;
-  },
+      promise.each(Object.keys(modules), (m) => {
+        return new Promise((yes, no) => {
+          const moduleObject = modules[m];
+          if ( moduleObject ) {
+            moduleObject.default.getAdapters().then((adapters) => {
+              Object.keys(adapters)
+                .forEach((k) => (adapterList[k] = adapters[k]));
 
-  /**
-   * Starts polling
-   * @param {Function} cb Callback function
-   */
-  start(cb) {
-    const run = () => {
-      if ( paused ) {
-        return;
-      }
-
-      Adapters.getAdapters().then((s) => {
-        cb(Preferences.get('collection').map((collection) => {
-          return (new SensorCollection(s, collection)).toJson();
-        }));
-      }).catch((e) => {
-        console.error(e);
-        clearInterval(interval);
-      });
-    };
-
-    interval = setInterval(run, Preferences.get('interval'));
-    run();
-  },
-
-  /**
-   * Stops polling
-   */
-  stop() {
-    clearInterval(interval);
-  },
-
-  /**
-   * Toggles polling state
-   */
-  pause() {
-    paused = !paused;
+              yes();
+            }).catch(no);
+          } else {
+            no('Cannot load module: ' + m);
+          }
+        });
+      }).then(() => {
+        resolve(adapterList);
+      }).catch(reject);
+    });
   }
-
 };
