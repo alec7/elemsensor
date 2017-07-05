@@ -39,6 +39,19 @@ const UNITS = {
 };
 
 /**
+ * Gets a value in its correct representation
+ */
+function getValue(type, value) {
+  if ( type === 'in' ) {
+    return value.toFixed(3);
+  } else if ( type === 'temp' ) {
+    return value.toFixed(1);
+  }
+
+  return value;
+}
+
+/**
  * Gets a value for map
  * @param {String} bound Bounding string (min/max)
  * @param {Object} map The map
@@ -63,7 +76,7 @@ const getSensorBuffer = (function() {
   const sensorMax = {};
 
   return function(iter, sensor) {
-    const value = sensor.input;
+    const value = getValue(sensor.sensor, sensor.input);
     const sensorBufferLength = Preferences.get('buffer');
 
     if ( typeof sensorBuffer[iter] === 'undefined' ) {
@@ -111,7 +124,7 @@ export default class Sensor {
     this.values = values;
     this.min = min;
     this.max = max;
-    this.value = sensor.input;
+    this.value = getValue(this.type, sensor.input);
   }
 
   /**

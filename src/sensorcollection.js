@@ -124,6 +124,7 @@ export default class SensorCollection {
    */
   createOptions() {
     const {min, max} = this.bounds();
+
     return Object.assign({
       distributeSeries: this.type !== 'Line',
       low: min,
@@ -153,14 +154,21 @@ export default class SensorCollection {
     const name = this.collection.map((r) => r.name).join(', ');
 
     return {
-      className: this.count() ? 'has-sensors' : '',
       name: name,
       label: this.label || name,
-      values: unitized('value'),
-      count: this.count(),
-      min: unitized('min'),
-      max: unitized('max'),
       sensors: this.collection.map((r) => r.name),
+
+      options: {
+        showMinMax: true
+      },
+
+      data: {
+        values: unitized('value'),
+        count: this.count(),
+        min: unitized('min'),
+        max: unitized('max')
+      },
+
       chart: {
         type: this.type,
         options: this.createOptions(),

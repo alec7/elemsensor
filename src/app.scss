@@ -13,11 +13,6 @@ body {
       padding : 1em;
       min-height : 5em;
 
-      &.has-sensors {
-        & > div > div {
-        }
-      }
-
       & > div {
         & > div.noData {
           &:after {
@@ -30,9 +25,41 @@ body {
 
         & > header {
           margin-bottom : 1em;
+          display : flex;
 
-          & > span.value {
-            float : right;
+          div {
+            overflow : hidden;
+            white-space : nowrap;
+
+            &.left {
+              flex : 1 1 auto;
+              max-width : 800px;
+            }
+
+            &.right {
+              flex : 1 1;
+              text-align : right;
+            }
+
+            & > span {
+              display : inline-block;
+              overflow : hidden;
+              text-overflow: ellipsis;
+              line-height : 2;
+
+              &.label {
+                font-weight : bold;
+              }
+              &.name {
+
+              }
+              &.value {
+                display : block;
+              }
+              &.minmax {
+                display : block;
+              }
+            }
           }
         }
       }
