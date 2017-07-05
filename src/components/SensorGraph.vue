@@ -38,15 +38,6 @@
   </div>
 </template>
 
-<style>
-.sensor-graph .ct-line {
-  stroke-width: 1px;
-}
-.sensor-graph .ct-point {
-  stroke-width: 4px;
-}
-</style>
-
 <script>
 
 export default {

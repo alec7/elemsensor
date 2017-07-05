@@ -27,6 +27,7 @@ import Localization from './localization.js';
 import Vex from 'vex-js';
 
 let currentCollection;
+let currentSensorList;
 
 /**
  * Gets the default list of sensor collections to add
@@ -121,6 +122,24 @@ const DEFAULT_PREFERENCES = {
   buffer: 10,
   interval: 1000
 };
+
+/**
+ * Initializes settings
+ */
+function initSettings() {
+  Object.keys(DEFAULT_PREFERENCES).forEach((k) => {
+    if ( typeof ElectronSettings.get(k) === 'undefined' ) {
+      ElectronSettings.set(k, DEFAULT_PREFERENCES[k]);
+    }
+  });
+
+  const tst = ElectronSettings.get('collection');
+  if ( !(tst instanceof Array) || !tst.length ) {
+    ElectronSettings.set('collection', getDefaultSensorCollection(currentSensorList));
+  }
+
+  currentCollection = ElectronSettings.get('collection');
+}
 
 const collectionMethods = {
   /**
@@ -282,18 +301,22 @@ export default {
    * @return {Promise}
    */
   init(sensors) {
-    Object.keys(DEFAULT_PREFERENCES).forEach((k) => {
-      if ( typeof ElectronSettings.get(k) === 'undefined' ) {
-        ElectronSettings.set(k, DEFAULT_PREFERENCES[k]);
-      }
-    });
+    currentSensorList = sensors;
 
-    const tst = ElectronSettings.get('collection');
-    if ( !(tst instanceof Array) || !tst.length ) {
-      ElectronSettings.set('collection', getDefaultSensorCollection(sensors));
-    }
+    initSettings();
 
-    currentCollection = ElectronSettings.get('collection');
+    return Promise.resolve(true);
+  },
+
+  /**
+   * Resets all settings
+   * @return {Promise}
+   */
+  reset() {
+
+    ElectronSettings.deleteAll();
+
+    initSettings();
 
     return Promise.resolve(true);
   },

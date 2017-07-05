@@ -4,6 +4,14 @@ body {
   padding : 0;
 }
 
+.sensor-graph .ct-line {
+  stroke-width: 1px;
+}
+
+.sensor-graph .ct-point {
+  stroke-width: 4px;
+}
+
 .dashboard {
   background-color : #fff;
 

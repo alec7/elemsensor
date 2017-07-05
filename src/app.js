@@ -60,6 +60,11 @@ const init = (sensors) => {
       {
         label: Localization._('MENU_FILE'),
         submenu: [{
+          label: Localization._('MENU_RESET'),
+          click: () => (Preferences.reset())
+        }, {
+          type: 'separator'
+        }, {
           role: 'quit'
         }]
       },
@@ -69,7 +74,7 @@ const init = (sensors) => {
           label: Localization._('PAUSE'),
           type: 'checkbox',
           checked: Monitor.state(),
-          click: () => Monitor.pause()
+          click: () => (Monitor.pause())
         }, {
           label: Localization._('FAHRENHEIT'),
           type: 'checkbox',
