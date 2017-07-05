@@ -107,8 +107,8 @@ const DEFAULT_PREFERENCES = {
   temperature: 'celcius',
   min: {
     temp: 0.0,
-    fan: 2500,
-    in: -5.0,
+    fan: 0,
+    in: 0.0,
     intrusion: 0,
     beep: 0
   },
@@ -281,6 +281,7 @@ export default {
   collection: (function() {
     const result = {};
 
+    // Bind saving to each available method
     Object.keys(collectionMethods).forEach((m) => {
       result[m] = function() {
         const ret = collectionMethods[m].apply(null, arguments);
@@ -292,7 +293,6 @@ export default {
     });
 
     return result;
-
   })(),
 
   /**
@@ -313,7 +313,6 @@ export default {
    * @return {Promise}
    */
   reset() {
-
     ElectronSettings.deleteAll();
 
     initSettings();

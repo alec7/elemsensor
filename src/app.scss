@@ -1,19 +1,40 @@
+//@import 'colors';
+$alphabet: (a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z);
+$colors: (#ff5252, #ff4081, #e040fb, #7c4dff, #536dfe, #448aff, #40c4ff, #18ffff, #64ffda, #69f0ae, #b2ff59, #eeff41, #ffff00, #ffd740, #ffab40, #ff6e40, #5d4037, #616161, #455a64);
+
 body {
   font: menu;
   margin : 0;
   padding : 0;
 }
 
-.sensor-graph .ct-line {
-  stroke-width: 1px;
-}
+.sensor-graph {
+  @for $i from 1 through length($colors) {
+    $c: nth($colors, $i);
+    $k: nth($alphabet, $i);
 
-.sensor-graph .ct-point {
-  stroke-width: 4px;
+    .ct-series-#{$k} .ct-line {
+      stroke: $c;
+    }
+    .ct-series-#{$k} .ct-area {
+      fill: $c;
+    }
+    .ct-series-#{$k} .ct-point {
+      stroke: $c;
+    }
+  }
+
+  .ct-line {
+    stroke-width: 1px;
+  }
+
+  .ct-point {
+    stroke-width: 4px;
+  }
 }
 
 .dashboard {
-  background-color : #fff;
+  background-color : #f8f8f8;
 
   & > ul {
     list-style-type : none;
@@ -24,9 +45,10 @@ body {
       margin : 0;
       padding : 1em;
       min-height : 5em;
+      background-color : #fff;
 
-      &:nth-child(2n+1) {
-        background-color : #f7f7f7;
+      &:not(:last-child) {
+        margin-bottom : 1em;
       }
 
       & > div {
@@ -69,8 +91,17 @@ body {
               float : right;
               font-size : inherit;
 
-              td {
+              td, th {
                 padding : .2em;
+              }
+
+              tbody {
+                @for $i from 1 through length($colors) {
+                  $c: nth($colors, $i);
+                  td:nth-child(#{$i + 1}) {
+                    background-color: rgba($c, 0.2);
+                  }
+                }
               }
             }
           }

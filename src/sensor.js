@@ -40,6 +40,9 @@ const UNITS = {
 
 /**
  * Gets a value in its correct representation
+ * @param {String} type Sensor type
+ * @param {Number} value Sensor value
+ * @return {String|Number}
  */
 function getValue(type, value) {
   if ( type === 'in' ) {

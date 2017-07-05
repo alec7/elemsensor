@@ -130,8 +130,8 @@ export default class SensorCollection {
       low: min,
       high: max,
       chartPadding: 0,
-      showPoint: this.count() > 1,
-      showArea: this.count() < 2,
+      showPoint: false,
+      showArea: this.count() <= 1,
       fullWidth: true,
       axisX: {
         showLabel: false,
