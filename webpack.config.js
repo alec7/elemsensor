@@ -5,7 +5,7 @@ module.exports = {
   target: 'electron',
   entry: [
     './src/app.js',
-    './src/app.scss',
+    './src/sass/app.scss',
     './node_modules/chartist/dist/chartist.min.css',
     './node_modules/vex-js/dist/css/vex.css',
     './node_modules/vex-js/dist/css/vex-theme-os.css'
