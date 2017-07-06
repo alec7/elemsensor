@@ -43,7 +43,7 @@ export default class SensorCollection {
       let adapter, name;
       [adapter, name] = u.split(':');
 
-      const sensor = sensors[adapter].sensors[name];
+      const sensor = sensors[adapter] ? sensors[adapter].sensors[name] : {};
       return new Sensor(adapter, name, sensor);
     });
 

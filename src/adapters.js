@@ -25,8 +25,8 @@ import promise from 'bluebird';
 
 const modules = {
   'hardware': require('./modules/hardware.js'),
-  'lm_sensors': require('./modules/lm_sensors.js')/*,
-  'nvidia': require('./modules/nvidia.js')*/
+  'lm_sensors': require('./modules/lm_sensors.js'),
+  'nvidia': require('./modules/nvidia.js')
 };
 
 export default {
@@ -39,8 +39,10 @@ export default {
           const moduleObject = modules[m];
           if ( moduleObject ) {
             moduleObject.default.getAdapters().then((adapters) => {
-              Object.keys(adapters)
-                .forEach((k) => (adapterList[k] = adapters[k]));
+              const keys = Object.keys(adapters);
+              if ( keys.length ) {
+                keys.forEach((k) => (adapterList[k] = adapters[k]));
+              }
 
               yes();
             }).catch(no);
