@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "A Vue+Electron app for showing lm_sensors (and other) stats with pretty graphs",
   "scripts": {
-    "start": "electron build",
+    "start-debug": "NODE_ENV=development electron build/",
+    "start": "electron build/",
     "build": "webpack",
     "watch": "webpack --watch"
   },
