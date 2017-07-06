@@ -130,7 +130,7 @@ const DEFAULT_PREFERENCES = {
     beep: 1
   },
   buffer: 10,
-  interval: 1000
+  interval: (5 * 1000)
 };
 
 /**
