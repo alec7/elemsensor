@@ -61,14 +61,16 @@ function getSensors() {
     };
   })();
 
-  sensors.memory_usage = (function() {
+  sensors.memory_used = (function() {
     const total = OS.totalmem() / 1024 / 1024;
     const free = OS.freemem() / 1024 / 1024;
-    const used = total - free;
+    const used = Math.round(total - free);
 
     return {
-      sensor: 'number',
-      input: used
+      sensor: 'megabytes',
+      input: used,
+      max: total,
+      min: 0
     };
   })();
 

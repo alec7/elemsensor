@@ -29,6 +29,7 @@ import Localization from './localization.js';
  * Unit types
  */
 const UNITS = {
+  megabytes: 'MB',
   power: 'W',
   usage: '%',
   clock: 'MHz',

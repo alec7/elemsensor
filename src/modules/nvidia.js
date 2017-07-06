@@ -87,8 +87,8 @@ function getSensorMap(input) {
       input: parseInt(data['fan.speed'], 10)
     };
 
-    result[name + '_memory_usage'] = {
-      sensor: 'number',
+    result[name + '_memory_used'] = {
+      sensor: 'megabytes',
       input: parseInt(data['memory.used'], 10)
     };
   });
