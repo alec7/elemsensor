@@ -25,7 +25,8 @@ import promise from 'bluebird';
 
 const modules = {
   'hardware': require('./modules/hardware.js'),
-  'lm_sensors': require('./modules/lm_sensors.js')
+  'lm_sensors': require('./modules/lm_sensors.js')/*,
+  'nvidia': require('./modules/nvidia.js')*/
 };
 
 export default {

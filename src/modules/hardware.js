@@ -27,6 +27,54 @@ let inited;
 let samples = [];
 let prevCpus = OS.cpus();
 
+function getSensors() {
+  const sensors = {};
+
+  OS.cpus().forEach((cpu, idx) => {
+    const name = 'cpu' + (idx + 1) + '_speed';
+    sensors[name] = {
+      sensor: 'clock',
+      input: cpu.speed
+    };
+  });
+
+  sensors.cpu_usage = (function() {
+    let result = 0;
+    let percent = 0;
+    let i = samples.length;
+    let j = 0;
+
+    while ( i-- ) {
+      j++;
+      if ( samples[i].total > 0 ) {
+        percent += (100 - Math.round(100 * samples[i].idle / samples[i].total));
+      }
+
+      if ( j === 10 ) {
+        result = percent / j;
+      }
+    }
+
+    return {
+      sensor: 'usage',
+      input: result
+    };
+  })();
+
+  sensors.memory_usage = (function() {
+    const total = OS.totalmem() / 1024 / 1024;
+    const free = OS.freemem() / 1024 / 1024;
+    const used = total - free;
+
+    return {
+      sensor: 'number',
+      input: used
+    };
+  })();
+
+  return sensors;
+}
+
 export default {
 
   /**
@@ -63,67 +111,13 @@ export default {
       }, 100);
     }
 
-    return Promise.resolve({
-      cpu_speed: {
-        adapter: 'cpu_speed',
-        sensors: (function() {
-          const sensors = {};
-
-          OS.cpus().forEach((cpu, idx) => {
-
-            const name = 'cpu' + (idx + 1);
-            sensors[name] = {
-              sensor: 'clock',
-              input: cpu.speed
-            };
-          });
-
-          return sensors;
-        })()
-      },
-      cpu_usage: {
-        adapter: 'cpu_usage',
-        sensors: {
-          usage: {
-            sensor: 'usage',
-            input: (function() {
-              let result = 0;
-              let percent = 0;
-              let i = samples.length;
-              let j = 0;
-
-              while ( i-- ) {
-                j++;
-                if ( samples[i].total > 0 ) {
-                  percent += (100 - Math.round(100 * samples[i].idle / samples[i].total));
-                }
-
-                if ( j === 10 ) {
-                  result = percent / j;
-                }
-              }
-
-              return result;
-            })()
-          }
+    return new Promise((resolve, reject) => {
+      resolve({
+        hardware: {
+          adapter: 'hardware',
+          sensors: getSensors()
         }
-      },
-      memory: {
-        adapter: 'memory',
-        sensors: {
-          usage: (function() {
-
-            const total = OS.totalmem() / 1024 / 1024;
-            const free = OS.freemem() / 1024 / 1024;
-            const used = total - free;
-
-            return {
-              sensor: 'number',
-              input: used
-            };
-          })()
-        }
-      }
+      });
     });
   }
 
