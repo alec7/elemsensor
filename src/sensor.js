@@ -29,6 +29,7 @@ import Localization from './localization.js';
  * Unit types
  */
 const UNITS = {
+  power: 'W',
   usage: '%',
   clock: 'MHz',
   temp: {

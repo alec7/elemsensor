@@ -113,6 +113,7 @@ const DEFAULT_PREFERENCES = {
   temperature: 'celcius',
   min: {
     usage: 0,
+    power: 0,
     clock: 100,
     temp: 0.0,
     fan: 0,
@@ -122,6 +123,7 @@ const DEFAULT_PREFERENCES = {
   },
   max: {
     usage: 100,
+    power: 1000,
     clock: 5000,
     temp: 120.0,
     fan: 2500,
@@ -138,7 +140,8 @@ const DEFAULT_PREFERENCES = {
  */
 function initSettings() {
   Object.keys(DEFAULT_PREFERENCES).forEach((k) => {
-    if ( typeof ElectronSettings.get(k) === 'undefined' ) {
+    const orig = ElectronSettings.get(k);
+    if ( typeof oirg === 'undefined' || typeof orig !== typeof DEFAULT_PREFERENCES[k]  ) {
       ElectronSettings.set(k, DEFAULT_PREFERENCES[k]);
     }
   });

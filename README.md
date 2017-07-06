@@ -26,7 +26,8 @@ $ npm run start
 - Easy to use and configure
 - Pretty graphs
 - Supports `lm_sensors` statistics
-- Also supports `cpu` and `memory` statistics
+- Supports `hardware` statistics (like cpu and ram usage)
+- Supports `nvidia` sensors (requires `nvidia-smi`)
 
 ## TODO
 
@@ -34,10 +35,9 @@ $ npm run start
 - Logo and icon
 - Custom intervals
 - Moving of graphs
-- Tiling of graphs (columns)
 - Alerts and criticals
 - Custom colors
-- Separete monitoring and display frequenzies
+- Custom sensor labels (collections can be renamed)
 
 ## License
 
