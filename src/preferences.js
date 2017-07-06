@@ -190,6 +190,14 @@ const collectionMethods = {
   },
 
   /**
+   * Clears all collections
+   * @return {void}
+   */
+  clear: () => {
+    currentCollection = [];
+  },
+
+  /**
    * Removes collection
    * @param {Number} index Collection index
    */

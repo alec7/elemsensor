@@ -94,6 +94,9 @@ const init = (adapters) => {
           click: () => {
             Preferences.collection.create();
           }
+        }, {
+          label: Localization._('MENU_CLEAR'),
+          click: () => (Preferences.collection.clear())
         }
           /*
           label: Localization._('MENU_GRAPHS'),
