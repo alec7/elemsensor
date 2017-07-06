@@ -37,6 +37,7 @@ $ npm run start
 - Tiling of graphs (columns)
 - Alerts and criticals
 - Custom colors
+- Separete monitoring and display frequenzies
 
 ## License
 
